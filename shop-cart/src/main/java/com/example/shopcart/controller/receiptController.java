@@ -78,16 +78,16 @@ public class receiptController {
         discountRepository.save(new Discount("ITEM000005", "BUY_TWO_GET_ONE_FREE"));
     }
 
-    @PostMapping("/receipt")
-    public ResponseEntity getReceipt(@RequestBody List<String> items) {
+    @GetMapping("/receipt/{shopCart}")
+    public ResponseEntity getReceipt(@PathVariable List<String> shopCart) {
         String receiptText = "";
         Double saveTotal = 0.00;
         Double total = 0.00;
 
-        for (String item : items) {
-            String[] itemInfo = item.split("-");
-            String barcode = itemInfo[0];
-            Integer count = Integer.parseInt(itemInfo[1]);
+        for (String shop : shopCart) {
+            String[] shopInfo = shop.split("-");
+            String barcode = shopInfo[0];
+            Integer count = Integer.parseInt(shopInfo[1]);
 
             Item item1 = itemRepository.findOneByBarcode(barcode);
 

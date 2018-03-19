@@ -1,9 +1,8 @@
 version: '2'
 services:
   db:
-    image: mysql:5.5
+    image: mysql:5.7
     container_name: shop
-    restart: always
     ports:
       - 3305:3306
     environment:
