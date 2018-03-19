@@ -26,12 +26,11 @@ export const getItem = () => {
 };
 
 
-export const getReceipt = (item) => {
+export const getReceipt = (shopCart) => {
     return dispatch => {
         (async () => {
-            const res = await request.post('../api/receipt',item);
+            const res = await request.get(`../api/receipt/${shopCart}`);
             if (res.status === 200) {
-                console.log(res.body)
                 dispatch(getReceiptText(res.body))
             }
         })()

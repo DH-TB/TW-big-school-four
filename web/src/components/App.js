@@ -50,35 +50,46 @@ class App extends Component {
         this.setState({array: array})
     }
 
-    buy() {
-        const array = [];
+    toShopCart(){
+        this.setState({selectId: 2});
         this.state.array.map(ele => {
             if (ele.count > 0) {
-                this.state.shopCart.push(ele);
-                array.push(`${ele.barcode}-${ele.count}`)
+                this.state.shopCart.push({
+                    barcode:ele.barcode,
+                    name:ele.name,
+                    count:ele.count
+                });
             }
         });
-        this.setState({array});
-        array.length === 0 ? message.warning('请添加要购买的商品') : this.props.getReceipt(array);
+    }
+
+    buy() {
+        const shopCart = this.state.shopCart.map(ele => `${ele.barcode}-${ele.count}`);
+        if(shopCart.length === 0){
+            message.warning('请添加要购买的商品');
+            this.setState({selectId: 1});
+        }
+        else{
+            this.props.getReceipt(shopCart);
+        }
     }
 
     render() {
         const items = this.props.item;
         const receipt = this.props.receipt[0] || '';
+
         const itemList = items.map((item, index) => {
+            const count = this.state.array.filter(s => s.index === index)[0].count
             return <Col key={index} span={6} className='card'>
                 <Card
                     actions={
                         [<p className='vertical-center'>请添加要购买的数量</p>,
                             <Row className='vertical-center'>
                                 <Col span={4} offset={1}>
-                                    <Button size={'small'}
-                                            onClick={this.reduce.bind(this, index)}>-</Button>
+                                    <Button size={'small'} onClick={this.reduce.bind(this, index)}>-</Button>
                                 </Col>
                                 <Col span={14}>
-                                    <Input size={'small'} defaultValue={0}
-                                           value={this.state.array.filter(s => s.index === index)[0].count}/>
-
+                                    <Input size={'small'} defaultValue={0} value={count}/>
                                 </Col>
                                 <Col span={4}>
                                     <Button size={'small'} onClick={this.add.bind(this, index, item)}>+</Button>
@@ -92,35 +103,18 @@ class App extends Component {
                 </Card>
             </Col>
         });
-        console.log(this.state.array);
-        const array = [];
-        this.state.array.map(ele => {
-            if (ele.count > 0) {
-                this.state.shopCart.push(ele);
-                array.push(`${ele.barcode}-${ele.count}`)
-            }
-        });
-        const shopCart = ["ITEM000000-2", "ITEM000001-3", "ITEM000005-1"];
-        // const shop = this.state.array.map((e, index) => {
-        //     const columns = [
-        //         {
-        //             title: '名称',
-        //             dataIndex: 'title',
-        //             key: '1',
-        //         },
-        //         {
-        //             title: '数量',
-        //             dataIndex: 'count',
-        //             key: '2',
-        //         }];
-        //     return (
-        //         <Table columns={columns}
-        //                dataSource={data}
-        //                rowKey={record => record.id}
-        //                pagination={false}
-        //         />
-        //     )
-        // });
+
+        const columns = [
+            {
+                title: '名称',
+                dataIndex: 'name',
+                key: '1',
+            },
+            {
+                title: '数量',
+                dataIndex: 'count',
+                key: '2',
+            }];
 
         return (
             <Layout>
@@ -131,12 +125,28 @@ class App extends Component {
                     </Menu>
                 </Header>
                 <Content className='content'>
-                    {this.state.selectId === 1 ? itemList : shopCart}
+                    {this.state.selectId === 1 ?
+                        <div>
+                            {itemList}
+                            <Button className='btn-buy' onClick={this.toShopCart.bind(this)}>我的购物车</Button>
+                        </div>
+                         :
+                        <div>
+                            <Table columns={columns}
+                                   dataSource={this.state.shopCart}
+                                   rowKey={record => record.id}
+                                   pagination={false}
+                            />
+
+                            <Button className='btn-buy' onClick={this.buy.bind(this)}>确认购买</Button>
+                            <div className='receipt'>
+                                {receipt}
+                            </div>
+                        </div>
+
+                        }
                 </Content>
-                <Button className='btn-buy' onClick={this.buy.bind(this)}>确认购买</Button>
-                <div className='receipt'>
-                    {receipt}
-                </div>
+
             </Layout>
         );
     }
@@ -152,7 +162,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         getItem: () => dispatch(action.getItem()),
-        getReceipt: (item) => dispatch(action.getReceipt(item))
+        getReceipt: (shopCart) => dispatch(action.getReceipt(shopCart))
     }
 };
 
