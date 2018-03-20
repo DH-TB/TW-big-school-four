@@ -34,14 +34,13 @@ class ShopCart extends Component {
             <div>
                 <Table columns={columns}
                        dataSource={this.props.shopCart}
-                       rowKey={record => record.id}
+                       rowKey={record => record.barcode}
                        pagination={false}
                 />
-
                 <Button className='btn-buy' onClick={this.buy.bind(this)}>确认购买</Button>
-                <div className='receipt'>
+                <pre className='receipt'>
                     {receipt}
-                </div>
+                </pre>
             </div>
         );
     }

@@ -45,15 +45,6 @@ class Item extends Component {
 
     toShopCart() {
         this.props.toShopCart();
-        this.state.array.map(ele => {
-            if (ele.count > 0) {
-                this.props.shopCart.push({
-                    barcode: ele.barcode,
-                    name: ele.name,
-                    count: ele.count
-                });
-            }
-        });
     }
 
 

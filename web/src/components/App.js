@@ -22,6 +22,16 @@ class App extends Component {
     }
 
     toShopCart(){
+        const itemState = this.refs.item.state;
+        itemState.array.map(ele => {
+            if (ele.count > 0) {
+                this.state.shopCart.push({
+                    barcode: ele.barcode,
+                    name: ele.name,
+                    count: ele.count
+                });
+            }
+        });
         this.setState({selectId: 2})
     }
 
@@ -33,7 +43,6 @@ class App extends Component {
     render() {
         const item = this.props.item;
         const receipt = this.props.receipt[0] || '';
-
         return (
             <Layout>
                 <Header className='header'>
@@ -45,6 +54,7 @@ class App extends Component {
                 <Content className='content'>
                     {this.state.selectId === 1 ?
                         <Item item={item}
+                              ref='item'
                               shopCart={this.state.shopCart}
                               toShopCart={this.toShopCart.bind(this)}
                         />
