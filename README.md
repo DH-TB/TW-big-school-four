@@ -5,6 +5,10 @@
 git clone git@github.com:DH-TB/TW-big-school-four.git
 cd TW-big-school-four/shop-cart/assembly
 docker-compose up -d
+后端：
+cd TW-big-school-four/shop-cart
+./gradlew bootrun
+前端：
 cd TW-big-school-four/web
 npm install
 npm start
